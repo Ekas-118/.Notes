@@ -56,6 +56,14 @@ jobs:
           Write-Host "Has private key: $($cert.HasPrivateKey)"
           Write-Host "Not before: $($cert.NotBefore)"
           Write-Host "Not after: $($cert.NotAfter)"
+          Write-Host "Enhanced Key Usage:"
+          foreach ($extension in $cert.Extensions) {
+            if ($extension -is [System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]) {
+              foreach ($oid in $extension.EnhancedKeyUsages) {
+                Write-Host "  $($oid.Value) - $($oid.FriendlyName)"
+              }
+            }
+          }
           
       - name: Build MSIX
         shell: pwsh
@@ -72,6 +80,7 @@ jobs:
             /p:AppxBundle=Always `
             /p:GenerateAppxPackageOnBuild=true `
             /p:GenerateAppInstallerFile=false `
+            /p:AppxPackageSigningEnabled=true `
             /p:PackageCertificateKeyFile="$pfxPath" `
             /p:PackageCertificatePassword="$env:PFX_PASSWORD"
 
