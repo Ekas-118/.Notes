@@ -77,19 +77,26 @@ jobs:
       - name: Build MSIX
         shell: pwsh
         run: |
-          msbuild DotNotes/DotNotes.csproj `
-            /p:Configuration=Release `
-            /p:Platform=x64 `
-            /p:RuntimeIdentifier=win-x64 `
-            /p:PublishReadyToRun=false `
-            /p:UapAppxPackageBuildMode=SideloadOnly `
-            /p:AppxBundle=Always `
-            /p:GenerateAppxPackageOnBuild=true `
-            /p:GenerateAppInstallerFile=false `
-            /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT" `
-            /p:Version="$env:APP_VERSION" `
-            /p:PackageVersion="$env:PACKAGE_VERSION"
+          $msbuildArgs = @(
+            "DotNotes/DotNotes.csproj"
+            "/p:Configuration=Release"
+            "/p:Platform=x64"
+            "/p:RuntimeIdentifier=win-x64"
+            "/p:PublishReadyToRun=false"
+            "/p:UapAppxPackageBuildMode=SideloadOnly"
+            "/p:AppxBundle=Always"
+            "/p:GenerateAppxPackageOnBuild=true"
+            "/p:GenerateAppInstallerFile=false"
+            "/p:AppxPackageSigningEnabled=true"
+            "/p:PackageCertificateThumbprint=$env:CERT_THUMBPRINT"
+            "/p:Version=$env:APP_VERSION"
+            "/p:PackageVersion=$env:PACKAGE_VERSION"
+          )
+          Write-Host "Building version $env:PACKAGE_VERSION"
+          & msbuild @msbuildArgs
+          if ($LASTEXITCODE -ne 0) {
+            throw "MSBuild failed with exit code $LASTEXITCODE"
+          }
 
       - name: Remove signing certificate
         if: always()
