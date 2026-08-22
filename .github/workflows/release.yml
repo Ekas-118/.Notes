@@ -81,8 +81,10 @@ jobs:
             -Force `
             -ErrorAction SilentlyContinue
 
-      - name: Upload MSIX
+      - name: Upload MSIX package
         uses: actions/upload-artifact@v4
         with:
           name: DotNotes-MSIX
-          path: "**/*.msixbundle"
+          path: DotNotes/AppPackages/
+          if-no-files-found: error
+    
