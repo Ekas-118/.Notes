@@ -27,50 +27,35 @@ jobs:
           /p:RuntimeIdentifier=win-x64
           /p:PublishReadyToRun=false
           
-      - name: Decode signing certificate
+      - name: Import signing certificate
         shell: pwsh
         env:
           PFX_BASE64: ${{ secrets.BASE64_ENCODED_PFX }}
+          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
         run: |
           $pfxPath = Join-Path $env:GITHUB_WORKSPACE "GitHubActionsWorkflow.pfx"
           $bytes = [Convert]::FromBase64String($env:PFX_BASE64)
           [IO.File]::WriteAllBytes($pfxPath, $bytes)
-          Write-Host "Certificate created at:"
-          Write-Host $pfxPath
-          Get-Item $pfxPath | Select-Object FullName, Length
-
-      - name: Verify certificate
-        shell: pwsh
-        env:
-          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
-        run: |
-          $pfxPath = Join-Path $env:GITHUB_WORKSPACE "GitHubActionsWorkflow.pfx"
-          $cert = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new(
-            $pfxPath,
-            $env:PFX_PASSWORD,
-            [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::DefaultKeySet
-          )
-          Write-Host "Subject: $($cert.Subject)"
-          Write-Host "Issuer: $($cert.Issuer)"
-          Write-Host "Thumbprint: $($cert.Thumbprint)"
-          Write-Host "Has private key: $($cert.HasPrivateKey)"
-          Write-Host "Not before: $($cert.NotBefore)"
-          Write-Host "Not after: $($cert.NotAfter)"
-          Write-Host "Enhanced Key Usage:"
-          foreach ($extension in $cert.Extensions) {
-            if ($extension -is [System.Security.Cryptography.X509Certificates.X509EnhancedKeyUsageExtension]) {
-              foreach ($oid in $extension.EnhancedKeyUsages) {
-                Write-Host "  $($oid.Value) - $($oid.FriendlyName)"
-              }
-            }
+          $password = ConvertTo-SecureString `
+            $env:PFX_PASSWORD `
+            -AsPlainText `
+            -Force
+          $cert = Import-PfxCertificate `
+            -FilePath $pfxPath `
+            -CertStoreLocation Cert:\CurrentUser\My `
+            -Password $password
+          Write-Host "Imported certificate:"
+          Write-Host "  Subject: $($cert.Subject)"
+          Write-Host "  Thumbprint: $($cert.Thumbprint)"
+          Write-Host "  Has private key: $($cert.HasPrivateKey)"
+          if (-not $cert.HasPrivateKey) {
+            throw "Imported certificate does not have a private key."
           }
+          "CERT_THUMBPRINT=$($cert.Thumbprint)" >> $env:GITHUB_ENV
           
       - name: Build MSIX
         shell: pwsh
-        env:
-          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
         run: |
-          $pfxPath = Join-Path $env:GITHUB_WORKSPACE "GitHubActionsWorkflow.pfx"
           msbuild DotNotes/DotNotes.csproj `
             /p:Configuration=Release `
             /p:Platform=x64 `
@@ -81,14 +66,20 @@ jobs:
             /p:GenerateAppxPackageOnBuild=true `
             /p:GenerateAppInstallerFile=false `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile="$pfxPath" `
-            /p:PackageCertificatePassword="$env:PFX_PASSWORD"
+            /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT"
 
-      - name: Remove certificate
+      - name: Remove signing certificate
         if: always()
         shell: pwsh
         run: |
-          Remove-Item "$env:GITHUB_WORKSPACE\GitHubActionsWorkflow.pfx" -Force -ErrorAction SilentlyContinue
+          Remove-Item `
+            "$env:GITHUB_WORKSPACE\GitHubActionsWorkflow.pfx" `
+            -Force `
+            -ErrorAction SilentlyContinue
+          Remove-Item `
+            "Cert:\CurrentUser\My\$env:CERT_THUMBPRINT" `
+            -Force `
+            -ErrorAction SilentlyContinue
 
       - name: Upload MSIX
         uses: actions/upload-artifact@v4
