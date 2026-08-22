@@ -27,7 +27,7 @@ jobs:
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes(
-            "GitHubActionsWorkflow.pfx",
+            "$env:GITHUB_WORKSPACE\GitHubActionsWorkflow.pfx",
             $bytes
           )
 
@@ -39,7 +39,7 @@ jobs:
           /p:UapAppxPackageBuildMode=SideloadOnly
           /p:AppxBundle=Always
           /p:GenerateAppxPackageOnBuild=true
-          /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx
+          /p:PackageCertificateKeyFile="${{ github.workspace }}\GitHubActionsWorkflow.pfx"
           /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}"
 
       - name: Remove certificate
