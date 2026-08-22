@@ -39,12 +39,15 @@ jobs:
           /p:UapAppxPackageBuildMode=SideloadOnly
           /p:AppxBundle=Always
           /p:GenerateAppxPackageOnBuild=true
+          /p:GenerateAppInstallerFile=false
           /p:PackageCertificateKeyFile="${{ github.workspace }}\GitHubActionsWorkflow.pfx"
           /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}"
 
       - name: Remove certificate
+        if: always()
         shell: pwsh
-        run: Remove-Item GitHubActionsWorkflow.pfx
+        run: |
+          Remove-Item "$env:GITHUB_WORKSPACE\GitHubActionsWorkflow.pfx" -Force -ErrorAction SilentlyContinue
 
       - name: Upload MSIX
         uses: actions/upload-artifact@v4
