@@ -74,29 +74,40 @@ jobs:
           "APP_VERSION=$version" >> $env:GITHUB_ENV
           "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
 
+      - name: Set package version
+        if: startsWith(github.ref, 'refs/tags/v')
+        shell: pwsh
+        run: |
+          $manifestPath = "DotNotes/Package.appxmanifest"
+          $version = "${{ github.ref_name }}" -replace '^v', ''
+          $parts = $version.Split('.')
+          if ($parts.Count -ne 3) {
+              throw "Release tag must be in the format vMAJOR.MINOR.PATCH, e.g. v1.1.0"
+          }
+          $packageVersion = "$($parts[0]).$($parts[1]).$($parts[2]).0"
+          [xml]$manifest = Get-Content $manifestPath
+          $identity = $manifest.Package.Identity
+          if ($null -eq $identity) {
+              throw "Could not find Package.Identity"
+          }
+          Write-Host "Package version: $($identity.Version) -> $packageVersion"
+          $identity.Version = $packageVersion
+          $manifest.Save((Resolve-Path $manifestPath))
+          
       - name: Build MSIX
         shell: pwsh
         run: |
-          $msbuildArgs = @(
-            "DotNotes/DotNotes.csproj"
-            "/p:Configuration=Release"
-            "/p:Platform=x64"
-            "/p:RuntimeIdentifier=win-x64"
-            "/p:PublishReadyToRun=false"
-            "/p:UapAppxPackageBuildMode=SideloadOnly"
-            "/p:AppxBundle=Always"
-            "/p:GenerateAppxPackageOnBuild=true"
-            "/p:GenerateAppInstallerFile=false"
-            "/p:AppxPackageSigningEnabled=true"
-            "/p:PackageCertificateThumbprint=$env:CERT_THUMBPRINT"
-            "/p:Version=$env:APP_VERSION"
-            "/p:PackageVersion=$env:PACKAGE_VERSION"
-          )
-          Write-Host "Building version $env:PACKAGE_VERSION"
-          & msbuild @msbuildArgs
-          if ($LASTEXITCODE -ne 0) {
-            throw "MSBuild failed with exit code $LASTEXITCODE"
-          }
+          msbuild DotNotes/DotNotes.csproj `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeIdentifier=win-x64 `
+            /p:PublishReadyToRun=false `
+            /p:UapAppxPackageBuildMode=SideloadOnly `
+            /p:AppxBundle=Always `
+            /p:GenerateAppxPackageOnBuild=true `
+            /p:GenerateAppInstallerFile=false `
+            /p:AppxPackageSigningEnabled=true `
+            /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT"
 
       - name: Remove signing certificate
         if: always()
