@@ -66,14 +66,14 @@ jobs:
           }
           $parts = $version.Split('.')
           if ($parts.Count -ne 3) {
-            throw "Version must be in MAJOR.MINOR.PATCH format, e.g. v1.2.3"
+            throw "Version must be MAJOR.MINOR.PATCH, e.g. v1.2.3"
           }
           $packageVersion = "$($parts[0]).$($parts[1]).$($parts[2]).0"
           Write-Host "Application version: $version"
-          Write-Host "MSIX package version: $packageVersion"
+          Write-Host "Package version: $packageVersion"
           "APP_VERSION=$version" >> $env:GITHUB_ENV
           "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
-          
+
       - name: Build MSIX
         shell: pwsh
         run: |
@@ -87,7 +87,7 @@ jobs:
             /p:GenerateAppxPackageOnBuild=true `
             /p:GenerateAppInstallerFile=false `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT"
+            /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT" `
             /p:Version="$env:APP_VERSION" `
             /p:PackageVersion="$env:PACKAGE_VERSION"
 
