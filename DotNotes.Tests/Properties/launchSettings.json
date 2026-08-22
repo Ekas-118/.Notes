@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DotNotes.Tests (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DotNotes.Tests (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}

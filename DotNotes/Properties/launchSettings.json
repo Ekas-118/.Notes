@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "DotNotes (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "DotNotes (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
