@@ -35,18 +35,57 @@ jobs:
             "$env:GITHUB_WORKSPACE\GitHubActionsWorkflow.pfx",
             $bytes
           )
+          
+      - name: Decode signing certificate
+        shell: pwsh
+        env:
+          PFX_BASE64: ${{ secrets.BASE64_ENCODED_PFX }}
+        run: |
+          $pfxPath = Join-Path $env:GITHUB_WORKSPACE "GitHubActionsWorkflow.pfx"
+          $bytes = [Convert]::FromBase64String($env:PFX_BASE64)
+          [IO.File]::WriteAllBytes($pfxPath, $bytes)
+          Write-Host "Certificate created at:"
+          Write-Host $pfxPath
+          Get-Item $pfxPath | Select-Object FullName, Length
 
+      - name: Verify certificate
+        shell: pwsh
+        env:
+          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
+        run: |
+          $pfxPath = Join-Path $env:GITHUB_WORKSPACE "GitHubActionsWorkflow.pfx"
+      
+          $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2
+      
+          $cert.Import(
+            $pfxPath,
+            $env:PFX_PASSWORD,
+            [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::DefaultKeySet
+          )
+      
+          Write-Host "Subject: $($cert.Subject)"
+          Write-Host "Issuer: $($cert.Issuer)"
+          Write-Host "Thumbprint: $($cert.Thumbprint)"
+          Write-Host "Has private key: $($cert.HasPrivateKey)"
+          
       - name: Build MSIX
-        run: >
-          msbuild DotNotes/DotNotes.csproj
-          /p:Configuration=Release
-          /p:Platform=x64
-          /p:UapAppxPackageBuildMode=SideloadOnly
-          /p:AppxBundle=Always
-          /p:GenerateAppxPackageOnBuild=true
-          /p:GenerateAppInstallerFile=false
-          /p:PackageCertificateKeyFile="${{ github.workspace }}\GitHubActionsWorkflow.pfx"
-          /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}"
+        shell: pwsh
+        env:
+          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
+        run: |
+          $pfxPath = Join-Path $env:GITHUB_WORKSPACE "GitHubActionsWorkflow.pfx"
+      
+          msbuild DotNotes/DotNotes.csproj `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeIdentifier=win-x64 `
+            /p:PublishReadyToRun=false `
+            /p:UapAppxPackageBuildMode=SideloadOnly `
+            /p:AppxBundle=Always `
+            /p:GenerateAppxPackageOnBuild=true `
+            /p:GenerateAppInstallerFile=false `
+            /p:PackageCertificateKeyFile="$pfxPath" `
+            /p:PackageCertificatePassword="$env:PFX_PASSWORD"
 
       - name: Remove certificate
         if: always()
