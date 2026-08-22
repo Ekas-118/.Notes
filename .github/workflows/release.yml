@@ -55,6 +55,24 @@ jobs:
             throw "Imported certificate does not have a private key."
           }
           "CERT_THUMBPRINT=$($cert.Thumbprint)" >> $env:GITHUB_ENV
+
+      - name: Determine version
+        shell: pwsh
+        run: |
+          if ("${{ github.ref_type }}" -eq "tag") {
+            $version = "${{ github.ref_name }}" -replace '^v', ''
+          } else {
+            $version = "1.0.0"
+          }
+          $parts = $version.Split('.')
+          if ($parts.Count -ne 3) {
+            throw "Version must be in MAJOR.MINOR.PATCH format, e.g. v1.2.3"
+          }
+          $packageVersion = "$($parts[0]).$($parts[1]).$($parts[2]).0"
+          Write-Host "Application version: $version"
+          Write-Host "MSIX package version: $packageVersion"
+          "APP_VERSION=$version" >> $env:GITHUB_ENV
+          "PACKAGE_VERSION=$packageVersion" >> $env:GITHUB_ENV
           
       - name: Build MSIX
         shell: pwsh
@@ -70,6 +88,8 @@ jobs:
             /p:GenerateAppInstallerFile=false `
             /p:AppxPackageSigningEnabled=true `
             /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT"
+            /p:Version="$env:APP_VERSION" `
+            /p:PackageVersion="$env:PACKAGE_VERSION"
 
       - name: Remove signing certificate
         if: always()
