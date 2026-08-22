@@ -20,7 +20,7 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Restore
-        run: msbuild DotNotes.sln /t:Restore /p:Configuration=Release
+        run: msbuild DotNotes.slnx /t:Restore /p:Configuration=Release
 
       - name: Decode signing certificate
         shell: pwsh
@@ -33,7 +33,7 @@ jobs:
 
       - name: Build MSIX
         run: >
-          msbuild DotNotes.sln
+          msbuild DotNotes.slnx
           /p:Configuration=Release
           /p:Platform=x64
           /p:UapAppxPackageBuildMode=SideloadOnly
