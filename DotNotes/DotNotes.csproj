@@ -71,9 +71,9 @@
 
   <!-- Publish Properties -->
   <PropertyGroup>
-	  <PublishReadyToRun>false</PublishReadyToRun>
+	  <PublishReadyToRun>True</PublishReadyToRun>
 	  <PublishTrimmed>false</PublishTrimmed>
-	  <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+	  <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
 	  <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
 	  <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
 	  <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
