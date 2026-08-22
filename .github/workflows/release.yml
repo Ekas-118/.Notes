@@ -88,6 +88,28 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: DotNotes-MSIX
-          path: DotNotes/AppPackages/
+          path: |
+            DotNotes/AppPackages/**/*.msixbundle
+            DotNotes/AppPackages/**/*.cer
           if-no-files-found: error
     
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download MSIX artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: DotNotes-MSIX
+          path: release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            release/**/*.msixbundle
+            release/**/*.cer
+          generate_release_notes: true
