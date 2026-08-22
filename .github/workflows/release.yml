@@ -33,7 +33,7 @@ jobs:
 
       - name: Build MSIX
         run: >
-          msbuild DotNotes.slnx
+          msbuild DotNotes/DotNotes.csproj
           /p:Configuration=Release
           /p:Platform=x64
           /p:UapAppxPackageBuildMode=SideloadOnly
