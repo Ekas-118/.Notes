@@ -32,18 +32,15 @@ jobs:
           )
 
       - name: Build MSIX
-        shell: pwsh
-        env:
-          PFX_PASSWORD: ${{ secrets.PFX_PASSWORD }}
-        run: |
-          msbuild DotNotes.slnx `
-            /p:Configuration=Release `
-            /p:Platform=x64 `
-            /p:UapAppxPackageBuildMode=SideloadOnly `
-            /p:AppxBundle=Always `
-            /p:GenerateAppxPackageOnBuild=true `
-            /p:PackageCertificateKeyFile="$PWD\GitHubActionsWorkflow.pfx" `
-            /p:PackageCertificatePassword="$env:PFX_PASSWORD"
+        run: >
+          msbuild DotNotes.slnx
+          /p:Configuration=Release
+          /p:Platform=x64
+          /p:UapAppxPackageBuildMode=SideloadOnly
+          /p:AppxBundle=Always
+          /p:GenerateAppxPackageOnBuild=true
+          /p:PackageCertificateKeyFile=GitHubActionsWorkflow.pfx
+          /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}"
 
       - name: Remove certificate
         shell: pwsh
