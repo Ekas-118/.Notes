@@ -7,7 +7,26 @@ on:
   workflow_dispatch:
 
 jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore
+        run: dotnet restore DotNotes.slnx
+
+      - name: Run unit tests
+        run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj --configuration Release --no-restore
+        
   build:
+    needs: test
     runs-on: windows-latest
 
     steps:
