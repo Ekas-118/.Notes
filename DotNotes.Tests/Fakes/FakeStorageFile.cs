@@ -6,16 +6,8 @@ using Windows.Storage.Streams;
 
 namespace DotNotes.Tests.Fakes
 {
-    internal class FakeStorageFile : IStorageFile
+    internal partial class FakeStorageFile(string name) : IStorageFile
     {
-        private string name;
-
-
-        public FakeStorageFile(string name)
-        {
-            this.name = name;
-        }
-
         public string ContentType => throw new NotImplementedException();
 
         public string FileType => throw new NotImplementedException();

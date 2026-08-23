@@ -27,25 +27,25 @@ namespace DotNotes.Bus.ViewModels
 
         public NoteViewModel(IFileService fileService)
         {
-            this._fileService = fileService;
-            this._note = new Note(fileService);
-            this.Filename = _note.Filename;
+            _fileService = fileService;
+            _note = new Note(fileService);
+            Filename = _note.Filename;
         }
 
         public void InitializeForExistingNote(Note note)
         {
-            this._note = note;
-            this.Filename = note.Filename;
-            this.Text = note.Text;
-            this.Date = note.Date;
+            _note = note;
+            Filename = note.Filename;
+            Text = note.Text;
+            Date = note.Date;
         }
 
         [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task Save()
         {
-            _note.Filename = this.Filename;
-            _note.Text = this.Text;
-            _note.Date = this.Date;
+            _note.Filename = Filename;
+            _note.Text = Text;
+            _note.Date = Date;
             await _note.SaveAsync();
 
             // Check if the DeleteCommand can now execute
@@ -56,8 +56,8 @@ namespace DotNotes.Bus.ViewModels
         private bool CanSave()
         {
             return _note is not null
-                && !string.IsNullOrWhiteSpace(this.Text)
-                && !string.IsNullOrWhiteSpace(this.Filename);
+                && !string.IsNullOrWhiteSpace(Text)
+                && !string.IsNullOrWhiteSpace(Filename);
         }
 
         [RelayCommand(CanExecute = nameof(CanDelete))]
@@ -76,8 +76,8 @@ namespace DotNotes.Bus.ViewModels
             // In a real application, you shouldn't perform
             // file operations in your CanExecute logic.
             return _note is not null
-                && !string.IsNullOrWhiteSpace(this.Filename)
-                && this._note.NoteFileExists();
+                && !string.IsNullOrWhiteSpace(Filename)
+                && _note.NoteFileExists();
         }
     }
 }

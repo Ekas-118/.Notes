@@ -12,7 +12,7 @@ namespace DotNotes.Views
 
         public AllNotesPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             _viewModel = App.Current.Services.GetService<AllNotesViewModel>();
         }
 

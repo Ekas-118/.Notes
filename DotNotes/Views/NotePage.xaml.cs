@@ -14,7 +14,7 @@ namespace DotNotes.Views
 
         public NotePage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
         }
 
         public void RegisterForDeleteMessages()
