@@ -7,3 +7,4 @@
 - [WinUI Notes part 2 - navigation and data binding](https://learn.microsoft.com/en-us/windows/apps/tutorials/winui-notes-pt2/0-intro)
 - [Data binding, dependency injection, and unit testing in WinUI](https://learn.microsoft.com/en-us/windows/apps/tutorials/winui-mvvm-toolkit/intro)
 
+<img width="896" height="627" alt="App screenshot" src="https://github.com/user-attachments/assets/baeb143d-dbf8-4158-929c-0c397e04ae90" />
