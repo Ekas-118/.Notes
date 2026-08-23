@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+    test:
     runs-on: windows-latest
 
     steps:
@@ -19,8 +19,15 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
       - name: Restore
-        run: dotnet restore DotNotes.slnx
+        shell: pwsh
+        run: |
+          msbuild DotNotes.slnx `
+            /t:Restore `
+            /p:Configuration=Release
 
       - name: Run unit tests
         run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj --configuration Release --no-restore
