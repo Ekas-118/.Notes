@@ -9,28 +9,39 @@ on:
 jobs:
   test:
     runs-on: windows-latest
-
+  
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
+  
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-
+  
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
-
+  
       - name: Restore
         shell: pwsh
         run: |
           msbuild DotNotes.slnx `
             /t:Restore `
-            /p:Configuration=Release
-
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:RuntimeIdentifier=win-x64 `
+            /p:PublishReadyToRun=false
+  
       - name: Run unit tests
-        run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj --configuration Release --no-restore
+        shell: pwsh
+        run: |
+          dotnet test DotNotes.Tests/DotNotes.Tests.csproj `
+            --configuration Release `
+            --no-restore `
+            --arch x64 `
+            --property:Platform=x64 `
+            --property:RuntimeIdentifier=win-x64 `
+            --property:PublishReadyToRun=false
         
   build:
     needs: test
