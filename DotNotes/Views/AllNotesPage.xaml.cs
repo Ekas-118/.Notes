@@ -8,12 +8,12 @@ namespace DotNotes.Views
 {
     public sealed partial class AllNotesPage : Page
     {
-        private AllNotesViewModel? viewModel;
+        private readonly AllNotesViewModel? _viewModel;
 
         public AllNotesPage()
         {
             this.InitializeComponent();
-            viewModel = App.Current.Services.GetService<AllNotesViewModel>();
+            _viewModel = App.Current.Services.GetService<AllNotesViewModel>();
         }
 
         private void NewNoteButton_Click(object sender, RoutedEventArgs e)
@@ -30,9 +30,9 @@ namespace DotNotes.Views
         {
             base.OnNavigatedTo(e);
 
-            if (viewModel is not null)
+            if (_viewModel is not null)
             {
-                await viewModel.LoadAsync();
+                await _viewModel.LoadAsync();
             }
         }
     }

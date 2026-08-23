@@ -7,25 +7,19 @@ using System.Threading.Tasks;
 
 namespace DotNotes.Bus.ViewModels
 {
-    public partial class AllNotesViewModel : ObservableObject
+    public partial class AllNotesViewModel(IFileService fileService) : ObservableObject
     {
-        private readonly AllNotes allNotes;
+        private readonly AllNotes _allNotes = new(fileService);
 
         [ObservableProperty]
-        private ObservableCollection<Note> notes;
-
-        public AllNotesViewModel(IFileService fileService)
-        {
-            allNotes = new AllNotes(fileService);
-            notes = new ObservableCollection<Note>();
-        }
+        private ObservableCollection<Note> _notes = [];
 
         [RelayCommand]
         public async Task LoadAsync()
         {
-            await allNotes.LoadNotes();
+            await _allNotes.LoadNotes();
             Notes.Clear();
-            foreach (var note in allNotes.Notes)
+            foreach (var note in _allNotes.Notes)
             {
                 Notes.Add(note);
             }

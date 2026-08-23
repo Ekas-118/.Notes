@@ -22,7 +22,7 @@
                         <RowDefinition Height="120"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="{x:Bind Text, Mode=OneWay}"
+                    <TextBlock Text="{x:Bind Text}"
                                Margin="4" TextWrapping="Wrap"
                                TextTrimming="WordEllipsis"/>
                     <Border Grid.Row="1" Padding="8,6,0,6"
@@ -51,7 +51,7 @@
             </CommandBar.Content>
         </CommandBar>
 
-        <ItemsView ItemsSource="{x:Bind viewModel.Notes}"
+        <ItemsView ItemsSource="{x:Bind _viewModel.Notes}"
                    Grid.Row="1" Margin="24" 
                    ItemTemplate="{StaticResource NoteItemTemplate}"
                    SelectionMode="None"

@@ -9,17 +9,13 @@ namespace DotNotes.Tests.Fakes
 {
     internal class FakeFileService : IFileService
     {
-        private Dictionary<string, string> fileStorage = [];
+        private readonly Dictionary<string, string> _fileStorage = [];
 
         public async Task CreateOrUpdateFileAsync(string filename, string contents)
         {
-            if (fileStorage.ContainsKey(filename))
+            if (!_fileStorage.TryAdd(filename, contents))
             {
-                fileStorage[filename] = contents;
-            }
-            else
-            {
-                fileStorage.Add(filename, contents);
+                _fileStorage[filename] = contents;
             }
 
             await Task.Delay(10); // Simulate some async work
@@ -27,10 +23,7 @@ namespace DotNotes.Tests.Fakes
 
         public async Task DeleteFileAsync(string filename)
         {
-            if (fileStorage.ContainsKey(filename))
-            {
-                fileStorage.Remove(filename);
-            }
+            _fileStorage.Remove(filename);
 
             await Task.Delay(10); // Simulate some async work
         }
@@ -42,7 +35,7 @@ namespace DotNotes.Tests.Fakes
                 throw new ArgumentException("Filename cannot be null or empty", nameof(filename));
             }
 
-            if (fileStorage.ContainsKey(filename))
+            if (_fileStorage.ContainsKey(filename))
             {
                 return true;
             }
@@ -52,7 +45,7 @@ namespace DotNotes.Tests.Fakes
 
         public IStorageFolder GetLocalFolder()
         {
-            return new FakeStorageFolder(fileStorage);
+            return new FakeStorageFolder(_fileStorage);
         }
 
         public async Task<IReadOnlyList<IStorageItem>> GetStorageItemsAsync()
@@ -69,10 +62,10 @@ namespace DotNotes.Tests.Fakes
 
         private IReadOnlyList<IStorageItem> GetStorageItemsInternal()
         {
-            return fileStorage.Keys.Select(filename => CreateFakeStorageItem(filename)).ToList();
+            return [.. _fileStorage.Keys.Select(filename => CreateFakeStorageItem(filename))];
         }
 
-        private IStorageItem CreateFakeStorageItem(string filename)
+        private static FakeStorageFile CreateFakeStorageItem(string filename)
         {
             return new FakeStorageFile(filename);
         }
@@ -81,9 +74,9 @@ namespace DotNotes.Tests.Fakes
         {
             await Task.Delay(10);
 
-            if (fileStorage.ContainsKey(file.Name))
+            if (_fileStorage.TryGetValue(file.Name, out string? value))
             {
-                return fileStorage[file.Name];
+                return value;
             }
 
             return string.Empty;

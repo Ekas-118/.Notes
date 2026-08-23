@@ -6,27 +6,22 @@ using Windows.Storage;
 
 namespace DotNotes.Bus.Models;
 
-public class AllNotes
+public class AllNotes(IFileService fileService)
 {
-    private IFileService fileService;
+    private readonly IFileService _fileService = fileService;
     public ObservableCollection<Note> Notes { get; set; } = [];
-
-    public AllNotes(IFileService fileService)
-    {
-        this.fileService = fileService;
-    }
 
     public async Task LoadNotes()
     {
         Notes.Clear();
-        await GetFilesInFolderAsync(fileService.GetLocalFolder());
+        await GetFilesInFolderAsync(_fileService.GetLocalFolder());
     }
 
     private async Task GetFilesInFolderAsync(IStorageFolder folder)
     {
         // Each StorageItem can be either a folder or a file.
         IReadOnlyList<IStorageItem> storageItems =
-                                    await fileService.GetStorageItemsAsync(folder);
+                                    await _fileService.GetStorageItemsAsync(folder);
         foreach (IStorageItem item in storageItems)
         {
             if (item.IsOfType(StorageItemTypes.Folder))
@@ -37,10 +32,10 @@ public class AllNotes
             else if (item.IsOfType(StorageItemTypes.File))
             {
                 IStorageFile file = (IStorageFile)item;
-                Note note = new(fileService)
+                Note note = new(_fileService)
                 {
                     Filename = file.Name,
-                    Text = await fileService.GetTextFromFileAsync(file),
+                    Text = await _fileService.GetTextFromFileAsync(file),
                     Date = file.DateCreated.DateTime
                 };
                 Notes.Add(note);

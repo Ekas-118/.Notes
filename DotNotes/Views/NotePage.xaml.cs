@@ -10,7 +10,7 @@ namespace DotNotes.Views
 {
     public sealed partial class NotePage : Page
     {
-        private NoteViewModel? noteVm;
+        private NoteViewModel? _noteVm;
 
         public NotePage()
         {
@@ -31,12 +31,12 @@ namespace DotNotes.Views
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            noteVm = App.Current.Services.GetService<NoteViewModel>();
+            _noteVm = App.Current.Services.GetService<NoteViewModel>();
             RegisterForDeleteMessages();
 
-            if (e.Parameter is Note note && noteVm is not null)
+            if (e.Parameter is Note note && _noteVm is not null)
             {
-                noteVm.InitializeForExistingNote(note);
+                _noteVm.InitializeForExistingNote(note);
             }
         }
 

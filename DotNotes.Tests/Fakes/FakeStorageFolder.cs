@@ -7,21 +7,16 @@ using Windows.Storage.FileProperties;
 
 namespace DotNotes.Tests.Fakes
 {
-    internal class FakeStorageFolder : IStorageFolder
+    internal partial class FakeStorageFolder(Dictionary<string, string> files) : IStorageFolder
     {
-        private string name;
-        private Dictionary<string, string> fileStorage = [];
-
-        public FakeStorageFolder(Dictionary<string, string> files)
-        {
-            fileStorage = files;
-        }
+        private string? _name;
+        private readonly Dictionary<string, string> _fileStorage = files;
 
         public FileAttributes Attributes => throw new NotImplementedException();
 
         public DateTimeOffset DateCreated => throw new NotImplementedException();
 
-        public string Name => name;
+        public string? Name => _name;
 
         public string Path => throw new NotImplementedException();
 
@@ -77,8 +72,8 @@ namespace DotNotes.Tests.Fakes
         {
             return AsyncInfo.Run<IReadOnlyList<StorageFile>>(async cancelToken =>
             {
-                List<IStorageFile> files = new();
-                foreach (var filename in fileStorage.Keys)
+                List<IStorageFile> files = [];
+                foreach (var filename in _fileStorage.Keys)
                 {
                     files.Add(new FakeStorageFile(filename));
                 }
@@ -86,10 +81,10 @@ namespace DotNotes.Tests.Fakes
             });
         }
 
-        public IAsyncOperation<StorageFolder> GetFolderAsync(string name)
+        public IAsyncOperation<StorageFolder?> GetFolderAsync(string name)
         {
             // no folders to return. return null.
-            return AsyncInfo.Run<StorageFolder>(async cancelToken =>
+            return AsyncInfo.Run<StorageFolder?>(async cancelToken =>
             {
                 return null;
             });
@@ -100,17 +95,17 @@ namespace DotNotes.Tests.Fakes
             // no folders to return. return empty list.
             return AsyncInfo.Run<IReadOnlyList<StorageFolder>>(async cancelToken =>
             {
-                List<IStorageFolder> folders = new();
+                List<IStorageFolder> folders = [];
                 return (IReadOnlyList<StorageFolder>)folders;
             });
         }
 
-        public IAsyncOperation<IStorageItem> GetItemAsync(string name)
+        public IAsyncOperation<IStorageItem?> GetItemAsync(string name)
         {
             // Check if the name exists in the file storage
-            return AsyncInfo.Run<IStorageItem>(async cancelToken =>
+            return AsyncInfo.Run<IStorageItem?>(async cancelToken =>
             {
-                if (fileStorage.ContainsKey(name))
+                if (_fileStorage.ContainsKey(name))
                 {
                     return new FakeStorageFile(name);
                 }
@@ -126,8 +121,8 @@ namespace DotNotes.Tests.Fakes
             // Return all files as IStorageItem
             return AsyncInfo.Run<IReadOnlyList<IStorageItem>>(async cancelToken =>
             {
-                List<IStorageItem> items = new();
-                foreach (var filename in fileStorage.Keys)
+                List<IStorageItem> items = [];
+                foreach (var filename in _fileStorage.Keys)
                 {
                     items.Add(new FakeStorageFile(filename));
                 }
@@ -150,7 +145,7 @@ namespace DotNotes.Tests.Fakes
             // For simplicity, just change the name property.
             return AsyncInfo.Run(async cancelToken =>
             {
-                name = desiredName;
+                _name = desiredName;
             });
         }
 
@@ -159,7 +154,7 @@ namespace DotNotes.Tests.Fakes
             // For simplicity, just change the name property.
             return AsyncInfo.Run(async cancelToken =>
             {
-                name = desiredName;
+                _name = desiredName;
             });
         }
     }

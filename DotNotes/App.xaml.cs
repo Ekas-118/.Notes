@@ -3,27 +3,26 @@ using DotNotes.Bus.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml;
 using System;
+using Windows.Storage;
 
 namespace DotNotes;
 
 public partial class App : Application
 {
-    private readonly IServiceProvider _serviceProvider;
-
     public App()
     {
         Services = ConfigureServices();
         this.InitializeComponent();
     }
 
-    private static IServiceProvider ConfigureServices()
+    private static ServiceProvider ConfigureServices()
     {
         var services = new ServiceCollection();
 
         // Services
         services.AddSingleton<IFileService>(x =>
             ActivatorUtilities.CreateInstance<WindowsFileService>(x,
-                            Windows.Storage.ApplicationData.Current.LocalFolder)
+                ApplicationData.Current.LocalFolder)
         );
 
         // ViewModels
@@ -35,13 +34,13 @@ public partial class App : Application
 
     protected override void OnLaunched(LaunchActivatedEventArgs args)
     {
-        m_window = new MainWindow();
-        m_window.Activate();
+        _window = new MainWindow();
+        _window.Activate();
     }
 
     public IServiceProvider Services { get; }
 
-    private Window? m_window;
+    private Window? _window;
 
     public new static App Current => (App)Application.Current;
 }

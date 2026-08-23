@@ -5,28 +5,15 @@ using Windows.Storage;
 
 namespace DotNotes.Bus.Services
 {
-    public class WindowsFileService : IFileService
+    public class WindowsFileService(IStorageFolder storageFolder) : IFileService
     {
-        public StorageFolder storageFolder;
-
-        public WindowsFileService(IStorageFolder storageFolder)
-        {
-            this.storageFolder = (StorageFolder)storageFolder;
-
-            if (this.storageFolder is null)
-            {
-                throw new ArgumentException("storageFolder must be of type StorageFolder", nameof(storageFolder));
-            }
-        }
+        public StorageFolder storageFolder = (StorageFolder)storageFolder ?? throw new ArgumentException("storageFolder must be of type StorageFolder", nameof(storageFolder));
 
         public async Task CreateOrUpdateFileAsync(string filename, string contents)
         {
             // Save the note to a file.
             StorageFile storageFile = (StorageFile)await storageFolder.TryGetItemAsync(filename);
-            if (storageFile is null)
-            {
-                storageFile = await storageFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
-            }
+            storageFile ??= await storageFolder.CreateFileAsync(filename, CreationCollisionOption.ReplaceExisting);
             await FileIO.WriteTextAsync(storageFile, contents);
         }
 
