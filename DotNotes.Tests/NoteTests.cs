@@ -13,9 +13,9 @@ namespace DotNotes.Tests
         {
             var noteVm = new NoteViewModel(new FakeFileService());
             Assert.IsNotNull(noteVm);
-            Assert.IsTrue(noteVm.Date > DateTime.Now.AddHours(-1));
-            Assert.IsTrue(noteVm.Filename.EndsWith(".txt"));
-            Assert.IsTrue(noteVm.Filename.StartsWith("notes"));
+            Assert.IsGreaterThan(DateTime.Now.AddHours(-1), noteVm.Date);
+            Assert.EndsWith(".txt", noteVm.Filename);
+            Assert.StartsWith("notes", noteVm.Filename);
             noteVm.Text = "Sample Note";
             Assert.AreEqual("Sample Note", noteVm.Text);
             noteVm.SaveCommand.Execute(null);
