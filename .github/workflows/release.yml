@@ -83,6 +83,7 @@ jobs:
       - name: Build MSIX
         run: |
           msbuild DotNotes/DotNotes.csproj `
+            /restore `
             /p:Configuration=Release `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:GenerateAppxPackageOnBuild=true `
