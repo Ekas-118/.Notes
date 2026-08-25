@@ -43,18 +43,20 @@ namespace DotNotes.Tests.Fakes
         public IAsyncAction DeleteAsync()
         {
             // For simplicity, do nothing.
-            return AsyncInfo.Run(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 // No operation
+                return Task.CompletedTask;
             });
         }
 
         public IAsyncAction DeleteAsync(StorageDeleteOption option)
         {
             // For simplicity, do nothing.
-            return AsyncInfo.Run(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 // No operation
+                return Task.CompletedTask;
             });
         }
 
@@ -70,48 +72,48 @@ namespace DotNotes.Tests.Fakes
 
         public IAsyncOperation<IReadOnlyList<StorageFile>> GetFilesAsync()
         {
-            return AsyncInfo.Run<IReadOnlyList<StorageFile>>(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 List<IStorageFile> files = [];
                 foreach (var filename in _fileStorage.Keys)
                 {
                     files.Add(new FakeStorageFile(filename));
                 }
-                return (IReadOnlyList<StorageFile>)files;
+                return Task.FromResult((IReadOnlyList<StorageFile>)files);
             });
         }
 
         public IAsyncOperation<StorageFolder?> GetFolderAsync(string name)
         {
             // no folders to return. return null.
-            return AsyncInfo.Run<StorageFolder?>(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
-                return null;
+                return Task.FromResult<StorageFolder?>(null);
             });
         }
 
         public IAsyncOperation<IReadOnlyList<StorageFolder>> GetFoldersAsync()
         {
             // no folders to return. return empty list.
-            return AsyncInfo.Run<IReadOnlyList<StorageFolder>>(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 List<IStorageFolder> folders = [];
-                return (IReadOnlyList<StorageFolder>)folders;
+                return Task.FromResult((IReadOnlyList<StorageFolder>)folders);
             });
         }
 
         public IAsyncOperation<IStorageItem?> GetItemAsync(string name)
         {
             // Check if the name exists in the file storage
-            return AsyncInfo.Run<IStorageItem?>(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 if (_fileStorage.ContainsKey(name))
                 {
-                    return new FakeStorageFile(name);
+                    return Task.FromResult<IStorageItem?>(new FakeStorageFile(name));
                 }
                 else
                 {
-                    return null;
+                    return Task.FromResult<IStorageItem?>(null);
                 }
             });
         }
@@ -119,14 +121,14 @@ namespace DotNotes.Tests.Fakes
         public IAsyncOperation<IReadOnlyList<IStorageItem>> GetItemsAsync()
         {
             // Return all files as IStorageItem
-            return AsyncInfo.Run<IReadOnlyList<IStorageItem>>(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 List<IStorageItem> items = [];
                 foreach (var filename in _fileStorage.Keys)
                 {
                     items.Add(new FakeStorageFile(filename));
                 }
-                return (IReadOnlyList<IStorageItem>)items;
+                return Task.FromResult((IReadOnlyList<IStorageItem>)items);
             });
         }
 
@@ -143,18 +145,20 @@ namespace DotNotes.Tests.Fakes
         public IAsyncAction RenameAsync(string desiredName)
         {
             // For simplicity, just change the name property.
-            return AsyncInfo.Run(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 _name = desiredName;
+                return Task.CompletedTask;
             });
         }
 
         public IAsyncAction RenameAsync(string desiredName, NameCollisionOption option)
         {
             // For simplicity, just change the name property.
-            return AsyncInfo.Run(async cancelToken =>
+            return AsyncInfo.Run(cancelToken =>
             {
                 _name = desiredName;
+                return Task.CompletedTask;
             });
         }
     }
