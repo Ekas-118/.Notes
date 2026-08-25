@@ -14,7 +14,6 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 8.0.x
-      - uses: microsoft/setup-msbuild@v3
   
       - name: Run Unit Tests
         run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj -c Release
@@ -80,6 +79,8 @@ jobs:
           $identity.Version = $packageVersion
           $manifest.Save((Resolve-Path $manifestPath))
           
+      - uses: microsoft/setup-msbuild@v3
+      
       - name: Build MSIX
         run: |
           msbuild DotNotes/DotNotes.csproj `
