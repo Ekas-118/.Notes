@@ -78,8 +78,7 @@
 		<AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
 		<AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
 		<GenerateTestArtifacts>False</GenerateTestArtifacts>
-		<AppxBundle>Always</AppxBundle>
-		<AppxBundlePlatforms>x64</AppxBundlePlatforms>
+		<AppxBundle>Never</AppxBundle>
 		<HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
