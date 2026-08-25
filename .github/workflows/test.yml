@@ -1,21 +1,13 @@
 name: Run Unit Tests
-
 on:
   push:
     branches: master
-
 jobs:
   test:
     runs-on: windows-latest
-
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v6
-      with:
-        dotnet-version: 8.0.x
-
-    - name: Run unit tests
-      run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj -c Release
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 8.0.x
+      - run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj -c Release
