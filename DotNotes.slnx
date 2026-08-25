@@ -8,6 +8,7 @@
     <File Path=".editorconfig" />
   </Folder>
   <Project Path="DotNotes.Bus/DotNotes.Bus.csproj" />
+  <Project Path="DotNotes.Tests/DotNotes.Tests.csproj" Id="5fa98e1b-a82d-4ec8-9e2a-a3698888627b" />
   <Project Path="DotNotes/DotNotes.csproj">
     <Platform Solution="*|ARM64" Project="ARM64" />
     <Platform Solution="*|x64" Project="x64" />
