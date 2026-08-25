@@ -1,8 +1,6 @@
 <Solution>
   <Configurations>
-    <Platform Name="ARM64" />
     <Platform Name="x64" />
-    <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
@@ -10,9 +8,7 @@
   <Project Path="DotNotes.Bus/DotNotes.Bus.csproj" />
   <Project Path="DotNotes.Tests/DotNotes.Tests.csproj" Id="5fa98e1b-a82d-4ec8-9e2a-a3698888627b" />
   <Project Path="DotNotes/DotNotes.csproj">
-    <Platform Solution="*|ARM64" Project="ARM64" />
-    <Platform Solution="*|x64" Project="x64" />
-    <Platform Solution="*|x86" Project="x86" />
+    <Platform Project="x64" />
     <Deploy />
   </Project>
 </Solution>
