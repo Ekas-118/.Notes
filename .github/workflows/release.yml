@@ -9,6 +9,7 @@ jobs:
     runs-on: windows-latest
     env:
       PFX_PATH: ${{ github.workspace }}\GitHubActionsWorkflow.pfx
+      CERT_STORE: Cert:\CurrentUser\My
   
     steps:
       - uses: actions/checkout@v7
@@ -29,7 +30,7 @@ jobs:
             -Force
           $cert = Import-PfxCertificate `
             -FilePath $env:PFX_PATH `
-            -CertStoreLocation Cert:\CurrentUser\My `
+            -CertStoreLocation $env:CERT_STORE `
             -Password $password
           Write-Host "Imported certificate:"
           Write-Host "  Subject: $($cert.Subject)"
@@ -54,7 +55,6 @@ jobs:
           if ($null -eq $identity) {
               throw "Could not find Package.Identity"
           }
-          Write-Host "Package version: $($identity.Version) -> $packageVersion"
           $identity.Version = $packageVersion
           $manifest.Save((Resolve-Path $manifestPath))
           
@@ -73,14 +73,8 @@ jobs:
       - name: Remove signing certificate
         if: always()
         run: |
-          Remove-Item `
-            $env:PFX_PATH `
-            -Force `
-            -ErrorAction SilentlyContinue
-          Remove-Item `
-            "Cert:\CurrentUser\My\$env:CERT_THUMBPRINT" `
-            -Force `
-            -ErrorAction SilentlyContinue
+          Remove-Item $env:PFX_PATH -Force
+          Remove-Item "$env:CERT_STORE\$env:CERT_THUMBPRINT" -Force
 
       - name: Upload MSIX package
         uses: actions/upload-artifact@v7
