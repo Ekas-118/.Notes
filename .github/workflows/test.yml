@@ -2,6 +2,12 @@ name: Run Unit Tests
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.txt'
+      - '.gitignore'
+      - '.gitattributes'
+      - '.editorconfig'
 jobs:
   test:
     runs-on: windows-latest
