@@ -24,10 +24,10 @@ jobs:
           
       - name: Import signing certificate
         run: |
-          $bytes = [Convert]::FromBase64String(${{ secrets.BASE64_ENCODED_PFX }})
+          $bytes = [Convert]::FromBase64String("${{ secrets.BASE64_ENCODED_PFX }}")
           [IO.File]::WriteAllBytes($env:PFX_PATH, $bytes)
           $password = ConvertTo-SecureString `
-            ${{ secrets.PFX_PASSWORD }} `
+            "${{ secrets.PFX_PASSWORD }}" `
             -AsPlainText `
             -Force
           $cert = Import-PfxCertificate `
