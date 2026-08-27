@@ -16,4 +16,7 @@ jobs:
       - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 8.0.x
-      - run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj -c Release
+          cache: true
+          cache-dependency-path: "**/packages.lock.json"
+      - run: msbuild .\DotNotes.slnx /t:Restore /p:RestoreLockedMode=true /m
+      - run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj -c Release --no-restore

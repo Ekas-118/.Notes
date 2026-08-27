@@ -18,9 +18,12 @@ jobs:
           dotnet-version: 8.0.x
           cache: true
           cache-dependency-path: "**/packages.lock.json"
+
+      - name: Restore
+        run: msbuild .\DotNotes.slnx /t:Restore /p:RestoreLockedMode=true /m
   
       - name: Run Unit Tests
-        run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj -c Release
+        run: dotnet test DotNotes.Tests/DotNotes.Tests.csproj -c Release --no-restore
           
       - name: Import signing certificate
         run: |
@@ -65,12 +68,12 @@ jobs:
       - name: Build MSIX
         run: |
           msbuild DotNotes/DotNotes.csproj `
-            /restore `
             /p:Configuration=Release `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:GenerateAppxPackageOnBuild=true `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT"
+            /p:PackageCertificateThumbprint="$env:CERT_THUMBPRINT" `
+            /m
 
       - name: Remove signing certificate
         if: always()
