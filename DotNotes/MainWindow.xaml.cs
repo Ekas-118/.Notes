@@ -1,36 +1,35 @@
-using Microsoft.UI.Windowing;
-using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-using WinRT;
 
 namespace DotNotes
 {
     /// <summary>
     /// An empty window that can be used on its own or navigated to within a Frame.
     /// </summary>
-    public sealed partial class MainWindow : Window
+    public sealed partial class MainWindow : WinUIEx.WindowEx
     {
-        private const int MinWidth = 300;
-        private const int MinHeight = 300;
+        private const int WindowMinWidth = 300;
+        private const int WindowMinHeight = 300;
 
         public MainWindow()
         {
             InitializeComponent();
 
             SetMinSize();
-
-            // Hide the default system title bar.
-            ExtendsContentIntoTitleBar = true;
-            // Replace system title bar with the WinUI TitleBar.
-            SetTitleBar(AppTitleBar);
+            SetCustomTitleBar();
         }
 
         private void SetMinSize()
         {
-            var presenter = AppWindow.Presenter.As<OverlappedPresenter>();
+            MinWidth = WindowMinWidth;
+            MinHeight = WindowMinHeight;
+        }
 
-            presenter.PreferredMinimumWidth = MinWidth;
-            presenter.PreferredMinimumHeight = MinHeight;
+        private void SetCustomTitleBar()
+        {
+            // Hide the default system title bar.
+            ExtendsContentIntoTitleBar = true;
+            // Replace system title bar with the WinUI TitleBar.
+            SetTitleBar(AppTitleBar);
         }
 
         private void AppTitleBar_BackRequested(TitleBar sender, object args)

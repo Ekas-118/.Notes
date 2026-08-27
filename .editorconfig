@@ -2,3 +2,8 @@
 
 # MVVMTK0045: Using [ObservableProperty] on fields is not AOT compatible for WinRT
 dotnet_diagnostic.MVVMTK0045.severity = none
+
+# Workaround for https://github.com/microsoft/microsoft-ui-xaml/issues/10855
+[XamlTypeInfo.g.cs]
+dotnet_diagnostic.CS0612.severity = none
+dotnet_diagnostic.CS0618.severity = none
