@@ -1,8 +1,7 @@
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using WinRT;
 
 namespace DotNotes
 {
@@ -11,9 +10,14 @@ namespace DotNotes
     /// </summary>
     public sealed partial class MainWindow : Window
     {
+        private const int MinWidth = 300;
+        private const int MinHeight = 300;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            SetMinSize();
 
             // Hide the default system title bar.
             ExtendsContentIntoTitleBar = true;
@@ -21,9 +25,17 @@ namespace DotNotes
             SetTitleBar(AppTitleBar);
         }
 
+        private void SetMinSize()
+        {
+            var presenter = AppWindow.Presenter.As<OverlappedPresenter>();
+
+            presenter.PreferredMinimumWidth = MinWidth;
+            presenter.PreferredMinimumHeight = MinHeight;
+        }
+
         private void AppTitleBar_BackRequested(TitleBar sender, object args)
         {
-            if (rootFrame.CanGoBack == true)
+            if (rootFrame.CanGoBack)
             {
                 rootFrame.GoBack();
             }
