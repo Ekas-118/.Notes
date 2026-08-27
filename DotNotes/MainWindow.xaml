@@ -9,11 +9,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:winex="using:WinUIEx"
     mc:Ignorable="d"
-    Title="DotNotes">
+    Title="DotNotes"
+    PersistenceId="MainWindow">
 
-    <winex:WindowEx.SystemBackdrop>
+    <Window.SystemBackdrop>
         <MicaBackdrop Kind="Base"/>
-    </winex:WindowEx.SystemBackdrop>
+    </Window.SystemBackdrop>
 
     <Grid>
         <Grid.RowDefinitions>
