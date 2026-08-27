@@ -276,11 +276,6 @@
         "resolved": "4.0.2",
         "contentHash": "83PHm/97WR6XuciUicakLXSPDFubMsphUHxQHgkUfHcF8rOjpnlKSjRazhuvcGeqy2co8ZudUNbTM+u5e5Ujow=="
       },
-      "Newtonsoft.Json": {
-        "type": "Transitive",
-        "resolved": "13.0.4",
-        "contentHash": "pdgNNMai3zv51W5aq268sujXUyx7SNdE2bj1wZcWjAQrKMFZV260lbqYop1d2GM67JI1huLRwxo9ZqnfF/lC6A=="
-      },
       "System.Buffers": {
         "type": "Transitive",
         "resolved": "4.5.1",
@@ -335,8 +330,7 @@
           "CommunityToolkit.Mvvm": "[8.4.2, )",
           "Microsoft.Extensions.DependencyInjection": "[10.0.11, )",
           "Microsoft.Windows.SDK.BuildTools": "[10.0.28000.2526, )",
-          "Microsoft.WindowsAppSDK": "[2.4.0, )",
-          "Newtonsoft.Json": "[13.0.4, )"
+          "Microsoft.WindowsAppSDK": "[2.4.0, )"
         }
       }
     },
