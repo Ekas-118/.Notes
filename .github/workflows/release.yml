@@ -18,6 +18,7 @@ jobs:
           dotnet-version: 8.0.x
           cache: true
           cache-dependency-path: "**/packages.lock.json"
+      - uses: microsoft/setup-msbuild@v3
 
       - name: Restore
         run: msbuild .\DotNotes.slnx /t:Restore /p:RestoreLockedMode=true /m
@@ -62,8 +63,6 @@ jobs:
           }
           $identity.Version = $packageVersion
           $manifest.Save((Resolve-Path $manifestPath))
-          
-      - uses: microsoft/setup-msbuild@v3
       
       - name: Build MSIX
         run: |
