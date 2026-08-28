@@ -9,15 +9,9 @@ using System.Threading.Tasks;
 
 namespace DotNotes.Bus.ViewModels
 {
-    public partial class NoteViewModel : ObservableObject
+    public partial class NoteViewModel(IFileService fileService) : ObservableObject
     {
-        private Note _note;
-        private readonly IFileService _fileService;
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
-        [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
-        private string _filename = string.Empty;
+        private Note _note = new(fileService);
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
@@ -26,22 +20,14 @@ namespace DotNotes.Bus.ViewModels
         [ObservableProperty]
         private DateTime _date = DateTime.Now;
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
-        private bool _noteExists = false;
+        private bool NoteExists { get; set; }
 
-        public NoteViewModel(IFileService fileService)
-        {
-            _fileService = fileService;
-            _note = new Note(fileService);
-            Filename = _note.Filename;
-        }
+        public string Filename => _note.Filename;
 
         public void InitializeForExistingNote(Note note)
         {
             NoteExists = true;
             _note = note;
-            Filename = note.Filename;
             Text = note.Text;
             Date = note.Date;
         }
@@ -49,39 +35,24 @@ namespace DotNotes.Bus.ViewModels
         [RelayCommand(CanExecute = nameof(CanSave))]
         private async Task Save()
         {
-            _note.Filename = Filename;
             _note.Text = Text;
             _note.Date = Date;
             await _note.SaveAsync();
-
-            // Check if the DeleteCommand can now execute
-            // (it can if the file now exists)
-            DeleteCommand.NotifyCanExecuteChanged();
 
             WeakReferenceMessenger.Default.Send(new NoteCloseMessage());
         }
 
         private bool CanSave()
         {
-            return _note is not null
-                && !string.IsNullOrWhiteSpace(Text)
-                && !string.IsNullOrWhiteSpace(Filename);
+            return !string.IsNullOrWhiteSpace(Text);
         }
 
-        [RelayCommand(CanExecute = nameof(CanDelete))]
+        [RelayCommand(CanExecute = nameof(NoteExists))]
         private async Task Delete()
         {
             await _note.DeleteAsync();
-            _note = new Note(_fileService);
-            // Send a message from some other module
-            WeakReferenceMessenger.Default.Send(new NoteCloseMessage());
-        }
 
-        private bool CanDelete()
-        {
-            return _note is not null
-                && !string.IsNullOrWhiteSpace(Filename)
-                && NoteExists;
+            WeakReferenceMessenger.Default.Send(new NoteCloseMessage());
         }
     }
 }
