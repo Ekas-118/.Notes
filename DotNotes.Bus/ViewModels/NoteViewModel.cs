@@ -22,6 +22,8 @@ namespace DotNotes.Bus.ViewModels
 
         private bool NoteExists { get; set; }
 
+        private bool CanSave => !string.IsNullOrWhiteSpace(Text) && Text != _note.Text;
+
         public string Filename => _note.Filename;
 
         public void InitializeForExistingNote(Note note)
@@ -40,11 +42,6 @@ namespace DotNotes.Bus.ViewModels
             await _note.SaveAsync();
 
             WeakReferenceMessenger.Default.Send(new NoteCloseMessage());
-        }
-
-        private bool CanSave()
-        {
-            return !string.IsNullOrWhiteSpace(Text);
         }
 
         [RelayCommand(CanExecute = nameof(NoteExists))]
