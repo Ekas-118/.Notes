@@ -26,6 +26,10 @@ namespace DotNotes.Bus.ViewModels
         [ObservableProperty]
         private DateTime _date = DateTime.Now;
 
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(DeleteCommand))]
+        private bool _noteExists = false;
+
         public NoteViewModel(IFileService fileService)
         {
             _fileService = fileService;
@@ -35,6 +39,7 @@ namespace DotNotes.Bus.ViewModels
 
         public void InitializeForExistingNote(Note note)
         {
+            NoteExists = true;
             _note = note;
             Filename = note.Filename;
             Text = note.Text;
@@ -74,13 +79,9 @@ namespace DotNotes.Bus.ViewModels
 
         private bool CanDelete()
         {
-            // Note: This is to illustrate how commands can be
-            // enabled or disabled.
-            // In a real application, you shouldn't perform
-            // file operations in your CanExecute logic.
             return _note is not null
                 && !string.IsNullOrWhiteSpace(Filename)
-                && _note.NoteFileExists();
+                && NoteExists;
         }
     }
 }

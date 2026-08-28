@@ -20,9 +20,4 @@ public class Note(IFileService fileService)
     {
         await _fileService.DeleteFileAsync(Filename);
     }
-
-    public bool NoteFileExists()
-    {
-        return _fileService.FileExists(Filename);
-    }
 }
