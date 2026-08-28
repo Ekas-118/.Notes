@@ -3,6 +3,7 @@ using DotNotes.Bus.Messages;
 using DotNotes.Bus.Models;
 using DotNotes.Bus.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -44,6 +45,15 @@ namespace DotNotes.Views
         {
             WeakReferenceMessenger.Default.Unregister<NoteCloseMessage>(this);
             base.OnNavigatedFrom(e);
+        }
+
+        private void NoteEditor_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (NoteEditor.Text == string.Empty)
+            {
+                NoteEditor.Focus(FocusState.Programmatic);
+                NoteEditor.SelectionStart = NoteEditor.Text.Length;
+            }
         }
     }
 }

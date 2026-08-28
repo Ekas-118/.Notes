@@ -27,7 +27,8 @@
                  Header="{x:Bind _noteVm.Date.ToString()}"
                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                  MaxWidth="400"
-                 Grid.Column="1"/>
+                 Grid.Column="1"
+                 Loaded="NoteEditor_Loaded"/>
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Right"
