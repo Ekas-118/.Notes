@@ -33,7 +33,7 @@
                     HorizontalAlignment="Right"
                     Spacing="4"
                     Grid.Row="1" Grid.Column="1">
-            <Button Content="Save" Command="{x:Bind _noteVm.SaveCommand}" Style="{StaticResource AccentButtonStyle}"/>
+            <Button Content="Save &amp; close" Command="{x:Bind _noteVm.SaveCommand}" Style="{StaticResource AccentButtonStyle}"/>
             <Button Content="Delete" Command="{x:Bind _noteVm.DeleteCommand}"/>
         </StackPanel>
     </Grid>

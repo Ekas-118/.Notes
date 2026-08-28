@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
+using DotNotes.Bus.Messages;
 using DotNotes.Bus.Models;
 using DotNotes.Bus.Services;
 using System;
@@ -51,6 +52,8 @@ namespace DotNotes.Bus.ViewModels
             // Check if the DeleteCommand can now execute
             // (it can if the file now exists)
             DeleteCommand.NotifyCanExecuteChanged();
+
+            WeakReferenceMessenger.Default.Send(new NoteCloseMessage());
         }
 
         private bool CanSave()
@@ -66,7 +69,7 @@ namespace DotNotes.Bus.ViewModels
             await _note.DeleteAsync();
             _note = new Note(_fileService);
             // Send a message from some other module
-            WeakReferenceMessenger.Default.Send(new NoteDeletedMessage(_note));
+            WeakReferenceMessenger.Default.Send(new NoteCloseMessage());
         }
 
         private bool CanDelete()

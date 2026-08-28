@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
-using DotNotes.Bus;
+using DotNotes.Bus.Messages;
 using DotNotes.Bus.Models;
 using DotNotes.Bus.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,9 +17,9 @@ namespace DotNotes.Views
             InitializeComponent();
         }
 
-        public void RegisterForDeleteMessages()
+        public void RegisterForCloseMessages()
         {
-            WeakReferenceMessenger.Default.Register<NoteDeletedMessage>(this, (r, m) =>
+            WeakReferenceMessenger.Default.Register<NoteCloseMessage>(this, (_, _) =>
             {
                 if (Frame.CanGoBack)
                 {
@@ -32,7 +32,7 @@ namespace DotNotes.Views
         {
             base.OnNavigatedTo(e);
             _noteVm = App.Current.Services.GetService<NoteViewModel>();
-            RegisterForDeleteMessages();
+            RegisterForCloseMessages();
 
             if (e.Parameter is Note note && _noteVm is not null)
             {
@@ -42,7 +42,7 @@ namespace DotNotes.Views
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            WeakReferenceMessenger.Default.Unregister<NoteDeletedMessage>(this);
+            WeakReferenceMessenger.Default.Unregister<NoteCloseMessage>(this);
             base.OnNavigatedFrom(e);
         }
     }
